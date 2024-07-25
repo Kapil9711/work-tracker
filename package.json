@@ -4,9 +4,9 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js",
-    "prod": "cross-env NODE_ENV=production  nodemon app.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "prod": "cross-env NODE_ENV=production  nodemon index.js"
   },
   "keywords": [],
   "author": "",

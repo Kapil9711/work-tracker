@@ -11,15 +11,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 global.__dirname = __dirname;
 
-//corrs setup for localhost5173
-// app.use(
-//   cors({
-//     origin: "http://localhost:5173",
-//     methods: "GET,HEAD,PUT,PATCH,DELETE,POST",
-//     credentials: true, // for cookies
-//   })
-// );
-app.use(cors());
+// corrs setup for localhost5173
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: "GET,HEAD,PUT,PATCH,DELETE,POST",
+    credentials: true, // for cookies
+  })
+);
 
 //setting public routes
 app.use(express.static(path.join(__dirname, "public")));
