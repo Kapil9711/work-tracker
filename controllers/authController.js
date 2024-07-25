@@ -14,7 +14,7 @@ export const register = catchAsyncError(async (req, res, next) => {
   const user = await usersModel.create(req.body);
   const token = user.getJwtToken();
   try {
-    const url = `${req.protocol}://localhost:8000/api/v1/isVerify/${token}`;
+    const url = `${req.protocol}://work-tracker-eight.vercel.app/api/v1/isVerify/${token}`;
     const message = `<a href=${url}>Verify</a>`;
 
     await sendEmail({
@@ -47,7 +47,7 @@ export const isVerifiedUser = catchAsyncError(async (req, res, next) => {
   await user.save();
   res.header("ContentType", "text/html");
   res.send(
-    "<h1> verified successfully visit: <a href='http://localhost:5173/'>login</a></h1>"
+    "<h1> verified successfully visit: <a href='http://work-tracker-eight.vercel.app'>login</a></h1>"
   );
 });
 
