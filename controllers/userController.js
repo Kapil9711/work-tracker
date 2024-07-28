@@ -101,6 +101,8 @@ export const uploadImage = async (req, res, next) => {
   }
 
   file.name = `img${user.id}${path.parse(file.name).ext}`;
+  console.log(__dirname);
+  console.log(file.name);
   file.mv(`${__dirname}/files/uploads/${file.name}`, async (err) => {
     if (err) return next(new ErrorHandler("file not uploadeded"));
     user.image = file.name;
@@ -119,6 +121,7 @@ export const getImageFile = async (req, res, next) => {
     return next(new ErrorHandler("no audio found with this id", 404));
   }
   const filePath = path.join(__dirname, "files", "uploads", user.image);
+  console.log(filePath);
   res.setHeader("Content-Type", "image/jpeg");
   res.setHeader(
     "Content-Disposition",
