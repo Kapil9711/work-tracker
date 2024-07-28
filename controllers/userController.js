@@ -3,6 +3,8 @@ import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncError from "../utils/captureAsyncError.js";
 import sendToken from "../utils/jwttokens.js";
 import verifyEmailAndUsername from "../utils/verifyEmailAndUsername.js";
+import path from "path";
+import fs from "fs";
 
 /**s
  * Get a user profile
@@ -78,3 +80,52 @@ export const getAllUser = catchAsyncError(async (req, res, next) => {
     data: users,
   });
 });
+
+//*****************************upload audio file => /api/v1/image/:id */
+export const uploadImage = async (req, res, next) => {
+  const user = await usersModel.findById(req.user.id);
+  if (!user) {
+    return next(new ErrorHandler("no task found with this id", 404));
+  }
+  if (!req.files) {
+    return next(new ErrorHandler("Please provide a file", 400));
+  }
+  const file = req.files.image;
+
+  if (file.size > process.env.AUDIO_SIZE) {
+    return next(new ErrorHandler("Audio should be less than 2mb", 400));
+  }
+
+  if (!file.mimetype.includes("image")) {
+    return next(new ErrorHandler("File should of type image"));
+  }
+
+  file.name = `${req.user.username.split(" ").join("_")}-img${user.id}${
+    path.parse(file.name).ext
+  }`;
+  file.mv(`./files/uploads/${file.name}`, async (err) => {
+    if (err) return next(new ErrorHandler("file not uploadeded"));
+    user.image = file.name;
+    await user.save();
+    res.status(200).json({
+      success: true,
+      message: "Image uploaded successfully",
+    });
+  });
+};
+
+//**************** */ get audio => /api/v1/image/:id ******************
+export const getImageFile = async (req, res, next) => {
+  const user = await usersModel.findById(req.user.id);
+  if (!user || !user.image) {
+    return next(new ErrorHandler("no audio found with this id", 404));
+  }
+  const filePath = path.join(__dirname, "files", "uploads", user.image);
+  res.setHeader("Content-Type", "image/jpeg");
+  res.setHeader(
+    "Content-Disposition",
+    'attachment; filename="userProfile.jpg"'
+  );
+  const readStream = fs.createReadStream(filePath);
+  readStream.pipe(res);
+};

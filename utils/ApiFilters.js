@@ -7,15 +7,16 @@ class ApiFilters {
 
   filter() {
     const copyStr = { ...this.queryStr };
-
-    const queryDateArr = copyStr?.date?.split("-");
+    console.log(copyStr.date);
+    const now = copyStr?.date && dayjs(copyStr.date);
+    console.log(now);
     const filterQuery = copyStr?.filter;
     // console.log(queryDateArr, filterQuery);
 
     const date = new Date();
-    const year = queryDateArr?.length ? queryDateArr[2] : date.getFullYear();
-    const month = queryDateArr?.length ? queryDateArr[1] - 1 : date.getMonth();
-    const day = queryDateArr?.length ? queryDateArr[0] : date.getDate();
+    const year = now ? now.year() : date.getFullYear();
+    const month = now ? now.month() : date.getMonth();
+    const day = now ? now.date() : date.getDate();
 
     let startOfDate = dayjs(
       new Date(Date.UTC(year, month, day, 0, 0, 0, 0))
@@ -26,15 +27,14 @@ class ApiFilters {
 
     if (filterQuery === "month") {
       startOfDate = dayjs(
-        new Date(Date.UTC(year, month, copyStr.date ? day : 1, 0, 0, 0, 0))
+        new Date(Date.UTC(year, month, 1, 0, 0, 0, 0))
       ).format();
 
       endOfDate = dayjs(
-        new Date(
-          Date.UTC(year, month + 1, copyStr.date ? day : 0, 23, 59, 59, 999)
-        )
+        new Date(Date.UTC(year, month + 1, 0, 23, 59, 59, 999))
       ).format();
     }
+    // console.log(startOfDate, endOfDate, filterQuery);
     let query = {
       targetDateTime: {
         $gte: startOfDate,
@@ -52,7 +52,7 @@ class ApiFilters {
       const sortBy = this.queryStr.sort.split(",").join(" ");
       this.query = this.query.sort(sortBy);
     } else {
-      this.query = this.query.sort("-createdAt");
+      this.query = this.query.sort("targetDateTime");
     }
     return this;
   }

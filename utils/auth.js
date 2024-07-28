@@ -5,16 +5,6 @@ import usersModel from "../models/User.js";
 
 export const isAuthenticated = catchAsyncError(async (req, res, next) => {
   let token;
-
-  //header based auth
-  // if (
-  //   req.headers.authorization &&
-  //   req.headers.authorization.startsWith("Bearer")
-  // ) {
-  //   token = req.headers.authorization.split(" ")[1];
-  // }
-
-  //httpOnly cokkie
   if (req.cookies.token) {
     token = req.cookies.token;
   }

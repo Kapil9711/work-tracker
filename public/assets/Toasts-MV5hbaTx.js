@@ -1,0 +1,1 @@
+import{j as i,B as n}from"./index-Dw1Oylpw.js";/* empty css                      */const r=()=>i.jsx("span",{className:"loading loading-spinner loading-lg"}),p=(o,s)=>{n[o](s,{position:"top-right"})};export{r as L,p as N};

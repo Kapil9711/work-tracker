@@ -85,7 +85,7 @@ export const uploadFile = async (req, res, next) => {
     return next(new ErrorHandler("File should of type audio"));
   }
 
-  file.name = `${req.user.username.split(" ").join("_")}-${task.id}${
+  file.name = `${req.user.username.split(" ").join("_")}-audio${task.id}${
     path.parse(file.name).ext
   }`;
   file.mv(`./files/uploads/${file.name}`, async (err) => {
@@ -102,9 +102,11 @@ export const getAudioFile = async (req, res, next) => {
   if (!task || !task.audio) {
     return next(new ErrorHandler("no audio found with this id", 404));
   }
-  const filePath = path.join(__dirname, "public", "uploads", task.audio);
+  const filePath = path.join(__dirname, "files", "uploads", task.audio);
   res.setHeader("Content-Type", "audio/mpeg");
   res.setHeader("Content-Disposition", 'attachment; filename="sample.mp3"');
   const readStream = fs.createReadStream(filePath);
   readStream.pipe(res);
 };
+
+

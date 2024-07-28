@@ -33,6 +33,9 @@ const options = {
     default: false,
     select: false,
   },
+  image: {
+    type: String,
+  },
   resetPasswordToken: String,
   resetPasswordExpires: String,
 };
