@@ -10,7 +10,6 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 global.__dirname = __dirname;
-
 // corrs setup for localhost5173
 // app.use(
 //   cors({

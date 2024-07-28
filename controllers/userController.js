@@ -100,10 +100,8 @@ export const uploadImage = async (req, res, next) => {
     return next(new ErrorHandler("File should of type image"));
   }
 
-  file.name = `${req.user.username.split(" ").join("_")}-img${user.id}${
-    path.parse(file.name).ext
-  }`;
-  file.mv(`./files/uploads/${file.name}`, async (err) => {
+  file.name = `img${user.id}${path.parse(file.name).ext}`;
+  file.mv(`${__dirname}/files/uploads/${file.name}`, async (err) => {
     if (err) return next(new ErrorHandler("file not uploadeded"));
     user.image = file.name;
     await user.save();
