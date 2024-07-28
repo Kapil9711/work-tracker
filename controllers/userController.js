@@ -121,7 +121,7 @@ export const getImageFile = async (req, res, next) => {
   if (!user || !user.image) {
     return next(new ErrorHandler("no audio found with this id", 404));
   }
-  const filePath = path.join("/temp", user.image);
+  const filePath = path.join("/tmp", user.image);
   console.log(filePath);
   res.setHeader("Content-Type", "image/jpeg");
   res.setHeader(
