@@ -5,6 +5,7 @@ import sendToken from "../utils/jwttokens.js";
 import verifyEmailAndUsername from "../utils/verifyEmailAndUsername.js";
 import path from "path";
 import fs from "fs";
+import fileModel from "../models/files.js";
 
 /**s
  * Get a user profile
@@ -91,7 +92,6 @@ export const uploadImage = async (req, res, next) => {
     return next(new ErrorHandler("Please provide a file", 400));
   }
   const file = req.files.image;
-
   if (file.size > process.env.AUDIO_SIZE) {
     return next(new ErrorHandler("Audio should be less than 2mb", 400));
   }
@@ -100,34 +100,56 @@ export const uploadImage = async (req, res, next) => {
     return next(new ErrorHandler("File should of type image"));
   }
 
-  file.name = `img${user.id}${path.parse(file.name).ext}`;
-  console.log(__dirname);
-  console.log(file.name);
-  const uploadPath = path.join("/tmp", file.name);
-  file.mv(uploadPath, async (err) => {
-    if (err) return next(new ErrorHandler("file not uploadeded"));
-    user.image = file.name;
-    await user.save();
-    res.status(200).json({
-      success: true,
-      message: "Image uploaded successfully",
+  const name = `img${user.id}${path.parse(file.name).ext}`;
+  // console.log(__dirname);
+  // console.log(file.name);
+
+  const fileDb = await fileModel.findOne({ user: req.user.id });
+
+  if (!fileDb) {
+    await fileModel.create({
+      filename: name,
+      data: file.data,
+      mimetype: file.mimetype,
+      user: req.user.id,
     });
-  });
+    res.status(201).json({
+      success: true,
+      message: "uploaded successfully",
+    });
+  } else {
+    await fileModel.findByIdAndUpdate(fileDb.id, {
+      filename: name,
+      data: file.data,
+      mimetype: file.mimetype,
+    });
+    res.status(201).json({
+      success: true,
+      message: "changed successfully",
+    });
+  }
 };
 
 //**************** */ get audio => /api/v1/image/:id ******************
 export const getImageFile = async (req, res, next) => {
-  const user = await usersModel.findById(req.user.id);
-  if (!user || !user.image) {
-    return next(new ErrorHandler("no audio found with this id", 404));
-  }
-  const filePath = path.join("/tmp", user.image);
-  console.log(filePath);
+  // const user = await usersModel.findById(req.user.id);
+  // if (!user || !user.image) {
+  //   return next(new ErrorHandler("no image found with this id", 404));
+  // }
+  const fileDb = await fileModel.findOne({ user: req.user.id });
+  if (!fileDb) return next(new ErrorHandler("No file with this user", 404));
+  const uploadPath = `/tmp/${fileDb.filename}`;
   res.setHeader("Content-Type", "image/jpeg");
   res.setHeader(
     "Content-Disposition",
     'attachment; filename="userProfile.jpg"'
   );
-  const readStream = fs.createReadStream(filePath);
-  readStream.pipe(res);
+
+  fs.writeFile(uploadPath, fileDb.data, (err, data) => {
+    if (err) {
+      return next(new ErrorHandler());
+    }
+    const readStream = fs.createReadStream(uploadPath);
+    readStream.pipe(res);
+  });
 };

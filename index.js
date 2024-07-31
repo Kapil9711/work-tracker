@@ -11,13 +11,13 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 global.__dirname = __dirname;
 // corrs setup for localhost5173
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    methods: "GET,HEAD,PUT,PATCH,DELETE,POST",
-    credentials: true, // for cookies
-  })
-);
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173",
+//     methods: "GET,HEAD,PUT,PATCH,DELETE,POST",
+//     credentials: true, // for cookies
+//   })
+// );
 // app.use(cors());
 
 //setting public routes
@@ -31,6 +31,7 @@ import ErrorHandler from "./utils/errorHandler.js";
 // Route files
 import userRoutes from "./routes/userRoute.js";
 import taskRoutes from "./routes/taskRoute.js";
+import eventRoutes from "./routes/eventRoute.js";
 
 const PORT = process.env.PORT || 8000;
 const mode = process.env.NODE_ENV || "development";
@@ -63,6 +64,7 @@ app.get("/file", (req, res) => {
 // Custom routes
 app.use("/api/v1", userRoutes);
 app.use("/api/v1", taskRoutes);
+app.use("/api/v1", eventRoutes);
 
 // Handling unmatched routes
 app.all("*", (req, res, next) => {
