@@ -8,7 +8,7 @@ import jwt from "jsonwebtoken";
 
 /**
  * Registers a user
- * Route - /api/v1/register
+ * Route - /api/v1/register    catch(fn)
  */
 export const register = catchAsyncError(async (req, res, next) => {
   const user = await usersModel.create(req.body);

@@ -82,7 +82,7 @@ export const getAllUser = catchAsyncError(async (req, res, next) => {
   });
 });
 
-//*****************************upload audio file => /api/v1/image/:id */
+//*****************************upload image file => /api/v1/image/:id */
 export const uploadImage = async (req, res, next) => {
   const user = await usersModel.findById(req.user.id);
   if (!user) {
@@ -138,7 +138,10 @@ export const getImageFile = async (req, res, next) => {
   // }
   const fileDb = await fileModel.findOne({ user: req.user.id });
   if (!fileDb) return next(new ErrorHandler("No file with this user", 404));
-  const uploadPath = `/tmp/${fileDb.filename}`;
+  // const uploadPath = `/tmp/${fileDb.filename}`;
+  const uploadPath = path.join(__dirname, "temp", fileDb.filename);
+
+  console.log("reseted");
   res.setHeader("Content-Type", "image/jpeg");
   res.setHeader(
     "Content-Disposition",
